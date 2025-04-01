@@ -8,9 +8,9 @@ app.use(express.json());
 
 // ✅ MySQL Connection
 const db = mysql.createConnection({
-  host: 'database-build.cewp5wkjfwkc.us-east-1.rds.amazonaws.com',    // e.g. localhost or AWS RDS endpoint
+  host: 'database-1.cem8ixjdggjn.us-east-1.rds.amazonaws.com',    // e.g. localhost or AWS RDS endpoint
   user: 'admin',
-  password: 'Moelittle123',
+  password: 'password123',
   database: 'classgive_db'
 });
 
