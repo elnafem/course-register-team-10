@@ -16,15 +16,25 @@ function Registration() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form validation here if needed
+    console.log("📤 Submitting form data:", formData);
+
     fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     })
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => setMessage('Registration failed'));
+      .then(res => {
+        console.log("📥 Server responded with status:", res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log("✅ Server response data:", data);
+        setMessage(data.message);
+      })
+      .catch(err => {
+        console.error("❌ Error during registration:", err);
+        setMessage('Registration failed');
+      });
   };
 
   return (
