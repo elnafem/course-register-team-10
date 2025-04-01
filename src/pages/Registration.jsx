@@ -10,15 +10,17 @@ function Registration() {
 
   const [message, setMessage] = useState('');
 
+  // ✅ Handles typing in inputs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ✅ Handles form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("📤 Submitting form data:", formData);
 
-    fetch('/api/register', {
+    fetch('http://<your-ec2-public-dns>:5000/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
