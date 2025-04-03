@@ -7,8 +7,14 @@ const PORT = 5000;
 
 // ✅ CORS – Allow requests only from your S3 static site
 app.use(cors({
-  origin: 'https://courseregistrationteam10.s3-website-us-east-1.amazonaws.com'
+  origin: [
+    'https://courseregistrationteam10.s3-website-us-east-1.amazonaws.com',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true
 }));
+app.options('*', cors());
 
 app.use(express.json());
 
