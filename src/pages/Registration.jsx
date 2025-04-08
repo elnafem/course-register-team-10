@@ -20,8 +20,8 @@ function Registration() {
     e.preventDefault();
     setMessage('Submitting...');
 
-    // ✅ Live EC2 backend URL
-    fetch('http://ec2-54-242-138-219.compute-1.amazonaws.com:5000/api/register', {
+    // Updated EC2 backend URL
+    fetch('http://ec2-3-85-44-168.compute-1.amazonaws.com:5001/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -35,9 +35,9 @@ function Registration() {
         return res.json();
       })
       .then(data => {
-        console.log("✅ Success:", data);
+        console.log("Success:", data);
         setMessage(data.message || 'Registration successful!');
-        // Clear form (optional)
+        // Clear form
         setFormData({
           studentId: '',
           fullName: '',
@@ -46,7 +46,7 @@ function Registration() {
         });
       })
       .catch(err => {
-        console.error("❌ Registration error:", err);
+        console.error("Registration error:", err);
         setMessage('Registration failed. Please try again later.');
       });
   };
