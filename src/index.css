@@ -4,3 +4,44 @@ body {
     padding: 0;
     background-color: #f5f5f5;
   }
+
+/* Title Banner (yellow) */
+.title-bar {
+  background-color: #ffb400; /* VCU Yellow */
+  color: black;
+  padding: 1rem;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+/* Navbar Banner (black) */
+.navbar {
+  background-color: #000;
+  padding: 0.75rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Page background image */
+body {
+  background: url('https://honors.vcu.edu/media/honors-college/student-life.rva2.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
+}

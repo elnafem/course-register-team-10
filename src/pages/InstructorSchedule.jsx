@@ -1,65 +1,100 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function InstructorSchedule() {
-  const [form, setForm] = useState({ instructorId: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [loggedIn, setLoggedIn] = useState(false);
-  const [sessions] = useState([
-    { course: "Intro to Programming", date: "2025-01-10", time: "10:00 AM", location: "Room 101" },
-    { course: "Data Structures", date: "2025-01-12", time: "02:00 PM", location: "Room 202" },
-  ]);
-  const navigate = useNavigate();
+  const [sessions, setSessions] = useState([]);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (form.instructorId === "instructor123" && form.password === "password123") {
+    try {
+      const res = await fetch('http://ec2-54-175-116-227.compute-1.amazonaws.com:5001/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+
+      const instructorId = data.instructorId;
+
+      const scheduleRes = await fetch(`http://ec2-54-175-116-227.compute-1.amazonaws.com:5001/api/schedule?instructorId=${instructorId}`);
+      const scheduleData = await scheduleRes.json();
+
+      setSessions(scheduleData);
       setLoggedIn(true);
-    } else {
-      alert("Invalid credentials");
+    } catch (err) {
+      console.error(err);
+      setError('Invalid credentials or server error.');
     }
   };
 
   return (
-    <div>
+    <div style={{ padding: '2rem' }}>
       <h2>Instructor Schedule</h2>
       {!loggedIn ? (
-        <form onSubmit={handleLogin}>
-          <label>Instructor ID:</label>
-          <input type="text" name="instructorId" value={form.instructorId} onChange={handleChange} required />
+        <form onSubmit={handleLogin} style={{ maxWidth: '400px', margin: 'auto' }}>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Email:</label><br />
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              style={{ width: '100%', padding: '8px' }}
+            />
+          </div>
 
-          <label>Password:</label>
-          <input type="password" name="password" value={form.password} onChange={handleChange} required />
+          <div style={{ marginBottom: '1rem' }}>
+            <label>Password:</label><br />
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              style={{ width: '100%', padding: '8px' }}
+            />
+          </div>
 
-          <button type="submit">Login</button>
+          <button type="submit" style={{ padding: '10px 20px' }}>Login</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
         </form>
       ) : (
         <div>
-          <h3>Your Sessions</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Course</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Location</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sessions.map((session, index) => (
-                <tr key={index}>
-                  <td>{session.course}</td>
-                  <td>{session.date}</td>
-                  <td>{session.time}</td>
-                  <td>{session.location}</td>
+          <h3>✅ Logged In</h3>
+          <p>Welcome! Here is your current teaching schedule:</p>
+
+          {sessions.length === 0 ? (
+            <p>No scheduled classes found.</p>
+          ) : (
+            <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', marginTop: '1rem', width: '100%' }}>
+              <thead>
+                <tr>
+                  <th>Course Name</th>
+                  <th>Date & Time</th>
+                  <th>Location</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <button onClick={() => navigate('/session-enrollment')}>View Session Enrollment</button>
+              </thead>
+              <tbody>
+                {sessions.map((session, index) => (
+                  <tr key={index}>
+                    <td>{session.course_name}</td>
+                    <td>{session.date_time}</td>
+                    <td>{session.location}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </div>

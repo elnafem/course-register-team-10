@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Registration() {
   const [formData, setFormData] = useState({
@@ -9,6 +9,23 @@ function Registration() {
   });
 
   const [message, setMessage] = useState('');
+  const [courses, setCourses] = useState([]);
+
+  // Fetch courses from the backend when component mounts
+  useEffect(() => {
+    fetch('http://ec2-54-175-116-227.compute-1.amazonaws.com:5001/api/courses')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch course list');
+        return res.json();
+      })
+      .then(data => {
+        setCourses(data);
+      })
+      .catch(err => {
+        console.error('Error loading courses:', err);
+        setCourses([]);
+      });
+  }, []);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -20,8 +37,7 @@ function Registration() {
     e.preventDefault();
     setMessage('Submitting...');
 
-    // Updated EC2 backend URL
-    fetch('http://ec2-3-85-44-168.compute-1.amazonaws.com:5001/api/register', {
+    fetch('http://ec2-54-175-116-227.compute-1.amazonaws.com:5001/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -37,7 +53,6 @@ function Registration() {
       .then(data => {
         console.log("Success:", data);
         setMessage(data.message || 'Registration successful!');
-        // Clear form
         setFormData({
           studentId: '',
           fullName: '',
@@ -81,9 +96,11 @@ function Registration() {
           required
         >
           <option value="">--Select a Course--</option>
-          <option value="Intro to Programming">Intro to Programming</option>
-          <option value="Data Structures">Data Structures</option>
-          <option value="Web Development">Web Development</option>
+          {courses.map((course, index) => (
+            <option key={index} value={course.course_name}>
+              {course.course_number} - {course.course_name}
+            </option>
+          ))}
         </select>
 
         <label>Email Address:</label>
